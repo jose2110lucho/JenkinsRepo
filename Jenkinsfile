@@ -5,11 +5,6 @@ pipeline {
     CONTAINER_PORT = "8081"
   }
   stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
-    }
     stage('Build & Test') {
       steps {
         bat 'mvn -B clean package'
@@ -35,12 +30,12 @@ pipeline {
   }
   post {
     always {
-      junit '*/target/surefire-reports/.xml'
+      junit '*/target/surefire-reports/*.xml'
       archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
     }
     success {
       echo '🎉 Pipeline completado exitosamente!'
-      echo '📱 Aplicación disponible en: http://localhost:%CONTAINER_PORT%'
+      echo "📱 Aplicación disponible en: http://localhost:${env.CONTAINER_PORT}"
     }
     failure {
       echo '❌ Pipeline falló!'
